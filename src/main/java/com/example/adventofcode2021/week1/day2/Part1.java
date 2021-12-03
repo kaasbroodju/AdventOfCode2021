@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class Part1 {
-    private static final int lines = 1000;
     private static int horizontalP;
     private static int depth;
 

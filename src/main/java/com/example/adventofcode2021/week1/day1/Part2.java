@@ -5,49 +5,31 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class Part2 {
-    private static int counter = 0;
 
-    public static void main(String[] args) {
-        int previousMeasurement = -1;
-        int[] measurements = readFile(new File("src/main/java/com/example/adventofcode2021/week1/day1/input.txt"));
-        for (int i = 0; i < measurements.length - 2; i++) {
-            int measurement = measurements[i] + measurements[i+1] + measurements[i+2];
-            if (measurement > previousMeasurement) {
-                counter++;
-            }
-            previousMeasurement = measurement;
-        }
-        System.out.println(counter - 1);
+    public static void main(String[] args) throws IOException {
+        System.out.println(getAnswer(new File("src/main/java/com/example/adventofcode2021/week1/day1/input.txt")));
     }
 
-    public static int[] readFile(File file) {
-        int[] outputArray;
-        try (Stream<String> amount = Files.lines(file.toPath())) {
-            outputArray = new int[(int) amount.count()];
-        } catch (IOException ioException) {
-            outputArray = new int[]{};
-        }
-        try {
-            Scanner myReader = new Scanner(file);
-            int i = 0;
-            while (myReader.hasNextInt()) {
-                outputArray[i] = myReader.nextInt();
-                i++;
+    public static int getAnswer(File file) throws IOException {
+        int counter = 0;
+        Iterator<String > iterator = Files.newBufferedReader(file.toPath()).lines().iterator();
+        int previousPreviousMeasurement = Integer.parseInt(iterator.next());
+        int previousMeasurement = Integer.parseInt(iterator.next());
+        int previousSum = Integer.MAX_VALUE;
+        while (iterator.hasNext()) {
+            int newMeasurement = Integer.parseInt(iterator.next());
+            int newSum = previousPreviousMeasurement + previousMeasurement + newMeasurement;
+            if (newSum > previousSum) {
+                counter++;
             }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            previousPreviousMeasurement = previousMeasurement;
+            previousMeasurement = newMeasurement;
+            previousSum = newSum;
         }
-//        System.out.println(Arrays.toString(outputArray));
-
-        return outputArray;
+        return counter;
     }
 }
