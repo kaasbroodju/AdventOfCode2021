@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Part2 {
+    private static final int lines = 1000;
     private static int horizontalP;
     private static int depth;
     private static int aim = 0;
@@ -14,26 +15,30 @@ public class Part2 {
     public static void main(String[] args) {
         for (Command command : readFile(new File("src/main/java/com/example/adventofcode2021/week1/day2/input.txt"))) {
             addposition(command.getCommand(), command.getAmount());
-            System.out.println(horizontalP + " " + depth + " " + aim);
         }
         System.out.println(horizontalP * depth);
     }
 
     public static void addposition(String command, int amount) {
         switch (command) {
-            case "down": aim+= amount; break;
-            case "up": aim-= amount; break;
-            case "forward": horizontalP += amount; depth+=aim * amount; break;
+            case "down" -> aim += amount;
+            case "up" -> aim -= amount;
+            case "forward" -> {
+                horizontalP += amount;
+                depth += aim * amount;
+            }
         }
     }
 
-    public static List<Command> readFile(File file) {
-        List<Command> output = new ArrayList<>();
+    public static Command[] readFile(File file) {
+        Command[] output = new Command[lines];
+        int i = 0;
         try {
             Scanner myReader = new Scanner(file);
             while (myReader.hasNextLine()) {
                 String[] command = myReader.nextLine().split(" ");
-                output.add(new Command(command[0], Integer.parseInt(command[1])));
+                output[i] = new Command(command[0], Integer.parseInt(command[1]));
+                i++;
             }
             myReader.close();
         } catch (FileNotFoundException e) {
