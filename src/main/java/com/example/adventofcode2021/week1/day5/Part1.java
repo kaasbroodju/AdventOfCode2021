@@ -14,30 +14,53 @@ import java.util.stream.Collectors;
 
 public class Part1 {
 
-
     public static void main(String[] args) throws IOException {
         System.out.println(old(new File("src/main/java/com/example/adventofcode2021/week1/day5/input.txt")));
     }
 
     public static int old(File file) throws IOException {
-
-        System.out.println(Arrays.toString(new Line(new Cords(6, 4), new Cords(2, 0)).getPoints()));
-        System.out.println(Arrays.toString(new Line(new Cords(8, 2), new Cords(5, 5)).getPoints()));
-
-        Line[] lines = new Line[500];
         int[][] grid = new int[1000][1000];
-        List<String> temp = Files.readAllLines(file.toPath());
-        for (int i = 0; i < temp.size(); i++) {
-            String[] split = temp.get(i).split(" -> ");
+        for (String s : Files.readAllLines(file.toPath())) {
+
+            String[] split = s.split(" -> ");
             String[] a = split[0].split(",");
             String[] b = split[1].split(",");
-            lines[i] = new Line(new Cords(Integer.parseInt(a[0]), Integer.parseInt(a[1])), new Cords(Integer.parseInt(b[0]), Integer.parseInt(b[1])));
 
-        }
+            int x1 = Integer.parseInt(a[0]);
+            int y1 = Integer.parseInt(a[1]);
+            int x2 = Integer.parseInt(b[0]);
+            int y2 = Integer.parseInt(b[1]);
 
-        for (Line line : lines) {
-            for (Cords cord : line.getPoints()) {
-                grid[cord.x()][cord.y()]++;
+            int length;
+
+            if (x1 == x2) {
+                length = y2 - y1;
+                grid[x1][y1]++;
+                grid[x2][y2]++;
+                if (length > 0) {
+                    for (int j = 1; j < length; j++) {
+                        grid[x1][y1 + j]++;
+                    }
+                } else {
+                    length *= -1;
+                    for (int j = 1; j < length; j++) {
+                        grid[x1][y1 - j]++;
+                    }
+                }
+            } else if (y1 == y2) {
+                length = x2 - x1;
+                grid[x1][y1]++;
+                grid[x2][y2]++;
+                if (length > 0) {
+                    for (int j = 1; j < length; j++) {
+                        grid[x1 + j][y1]++;
+                    }
+                } else {
+                    length *= -1;
+                    for (int j = 1; j < length; j++) {
+                        grid[x1 - j][y1]++;
+                    }
+                }
             }
         }
 

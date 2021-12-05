@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 public class Part2 {
 
-    private static final int totalcards = 100;
-
     public static void main(String[] args) throws IOException {
         System.out.println(old(new File("src/main/java/com/example/adventofcode2021/week1/day5/input.txt")));
     }
@@ -125,5 +123,4 @@ public class Part2 {
 
         return counter;
     }
-
 }
