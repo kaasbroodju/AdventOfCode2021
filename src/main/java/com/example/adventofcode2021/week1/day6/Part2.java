@@ -8,69 +8,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Part2 {
 
+    private static final int MAX_LIFE_CYCLE = 8;
+    private static final int MAX_INCUBATION_TIME = 6;
+
     public static void main(String[] args) throws IOException {
-        System.out.println(old(new File("src/main/java/com/example/adventofcode2021/week1/day6/input.txt")));
+        System.out.println(answer(
+                new File("src/main/java/com/example/adventofcode2021/week1/day6/input.txt"),
+                256));
     }
 
-    public static long old(File file) throws IOException {
-        List<Long> input = Arrays.stream(Files.readString(file.toPath()).split(",")).map(Long::parseLong).collect(Collectors.toList());
+    public static long answer(File file, int days) throws IOException {
+        String input = Files.readString(file.toPath());
 
-        // group them
-        Map<Integer, Long> groups = new HashMap<>();
-        groups.put(0, 0L);
-        groups.put(1, 0L);
-        groups.put(2, 0L);
-        groups.put(3, 0L);
-        groups.put(4, 0L);
-        groups.put(5, 0L);
-        groups.put(6, 0L);
-        groups.put(7, 0L);
-        groups.put(8, 0L);
-        for (Long integer : input) {
-            groups.put(Integer.parseInt(String.valueOf(integer)), groups.get(Integer.parseInt(String.valueOf(integer))) + 1);
+        long[] groups = new long[MAX_LIFE_CYCLE+1];
+
+        for (int i = 0; i < MAX_LIFE_CYCLE; i++) {
+            int finalI = i;
+            groups[i] = input.codePoints().filter(ch -> ch == '0' + finalI).count();
         }
+
         long swapValue;
         long tempValue;
-        for (int i = 0; i < 256; i++) {
-            swapValue = groups.get(8);
-            tempValue = groups.get(7);
-            groups.put(7, swapValue);
-            swapValue = tempValue;
-            tempValue = groups.get(6);
-            groups.put(6, swapValue);
-            swapValue = tempValue;
-            tempValue = groups.get(5);
-            groups.put(5, swapValue);
-            swapValue = tempValue;
-            tempValue = groups.get(4);
-            groups.put(4, swapValue);
-            swapValue = tempValue;
-            tempValue = groups.get(3);
-            groups.put(3, swapValue);
-            swapValue = tempValue;
-            tempValue = groups.get(2);
-            groups.put(2, swapValue);
-            swapValue = tempValue;
-            tempValue = groups.get(1);
-            groups.put(1, swapValue);
-            swapValue = tempValue;
-            tempValue = groups.get(0);
-            groups.put(0, swapValue);
+        for (int i = 0; i < days; i++) {
+            tempValue = groups[MAX_LIFE_CYCLE];
+            for (int j = MAX_LIFE_CYCLE; j > 0; j--) {
+                swapValue = tempValue;
+                tempValue = groups[j-1];
+                groups[j-1] = swapValue;
+            }
 
-            // end
-            groups.put(6, groups.get(6) + tempValue);
-            groups.put(8, tempValue);
+            groups[MAX_INCUBATION_TIME] += tempValue;
+            groups[MAX_LIFE_CYCLE] = tempValue;
         }
 
-        long tempOut = 0;
-        for (Integer integer : groups.keySet()) {
-            tempOut+= groups.get(integer);
-        }
-
-        return tempOut;
+        return Arrays.stream(groups).sum();
     }
+
 
 }
