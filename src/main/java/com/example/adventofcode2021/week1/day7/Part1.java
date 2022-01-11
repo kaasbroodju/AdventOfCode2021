@@ -56,21 +56,21 @@ public class Part1 {
 //        Arrays.sort(input);
         int max = Arrays.stream(input).max().getAsInt();
         int min = Arrays.stream(input).min().getAsInt();
-//        IntVector[] vectors = new IntVector[input.length/8];
+        IntVector[] vectors = new IntVector[input.length/8];
 ////        System.out.println(SPECIES);
 ////        int j = 0;
 //        int upperbound = SPECIES.loopBound(input.length);
-//        for (int i = 0; i < input.length / 8; i++) {
-//            vectors[i] = IntVector.fromArray(SPECIES, input, i*8);
-////            System.out.println(vectors[i]);
-//        }
+        for (int i = 0; i < input.length / 8; i++) {
+            vectors[i] = IntVector.fromArray(SPECIES, input, i*8);
+//            System.out.println(vectors[i]);
+        }
 
         long fuelRequired;
         long lowest = Long.MAX_VALUE;
         int[] results = new int[input.length];
         for (int i = min; i < max; i++) {
             for (int j = 0; j < input.length/8; j+=8) {
-                formulaSIMD(IntVector.fromArray(SPECIES, input, j).sub(i).abs()).intoArray(results, j);
+                formulaSIMD(vectors[j/8].sub(i).abs()).intoArray(results, j);
             }
 //            System.out.println(Arrays.toString(results));
             fuelRequired = Arrays.stream(results).asLongStream().sum();

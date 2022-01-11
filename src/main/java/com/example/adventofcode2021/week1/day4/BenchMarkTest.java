@@ -1,4 +1,4 @@
-//package com.example.adventofcode2021.week1.day5;
+//package com.example.adventofcode2021.week1.day4;//package com.example.adventofcode2021.week1.day5;
 //
 //import org.openjdk.jmh.annotations.*;
 //
@@ -14,7 +14,7 @@
 //
 //        @Setup
 //        public void setUp() {
-//            file = new File("src/main/java/com/example/adventofcode2021/week1/day5/input.txt");
+//            file = new File("src/main/java/com/example/adventofcode2021/week1/day4/input.txt");
 //        }
 //
 //        @TearDown
@@ -23,11 +23,11 @@
 //
 //    @Benchmark
 //    public int old(Input input) throws IOException {
-//        return Part1.old(input.file);
+//        return Part2.old(input.file);
 //    }
 //
 //    @Benchmark
 //    public int refactor(Input input) throws IOException {
-//        return Part2.old(input.file);
+//        return Part2.refactor(input.file);
 //    }
 //}

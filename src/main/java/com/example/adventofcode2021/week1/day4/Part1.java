@@ -1,15 +1,11 @@
 package com.example.adventofcode2021.week1.day4;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Part1 {
 
@@ -18,16 +14,27 @@ public class Part1 {
         System.out.println(old(new File("src/main/java/com/example/adventofcode2021/week1/day4/input.txt")));
     }
 
+    private static int[] numbers;
+    private static int[][][] cards;
+
     public static int old(File file) throws IOException {
-        int[] drawnNumbers = ints(file);
-        BingoCard[] cards = getCards(file);
-//        System.out.println(Arrays.toString(drawnNumbers));
-        for (int drawnNumber : drawnNumbers) {
-            System.out.println(drawnNumber);
-            for (BingoCard card : cards) {
-                if (card.mark(drawnNumber)) {
-                    System.out.println(drawnNumber + " * " + card.getRemaining());
-                    return drawnNumber * card.getRemaining();
+        BufferedReader br = Files.newBufferedReader(file.toPath());
+
+        numbers = Arrays.stream(br.readLine().split(",")).mapToInt(Integer::parseInt).toArray();
+
+        cards = new int[100][5][5];
+        for (int i = 0; i < cards.length; i++) {
+            br.readLine();
+            for (int y = 0; y < cards[i].length; y++) {
+                cards[i][y] = Arrays.stream(br.readLine().split(" ")).filter(s -> !s.equals("")).mapToInt(Integer::parseInt).toArray();
+            }
+        }
+
+
+        for (int number : numbers) {
+            for (int[][] card : cards) {
+                if (mark(card, number)) {
+                    return number * getRemaining(card);
                 }
             }
         }
@@ -35,42 +42,23 @@ public class Part1 {
         return 0;
     }
 
-    public static int[] ints(File file) throws IOException {
-        return Arrays.stream(Files.readAllLines(file.toPath()).get(
-                0
-        ).split(",")).mapToInt(Integer::parseInt).toArray();
+    public static boolean mark(int[][] card, int number) {
+        for (int i = 0; i < card.length; i++) {
+            for (int j = 0; j < card[i].length; j++) {
+                if(card[i][j] == number) {
+                    card[i][j] = -1;
+                    return bingo(card, i ,j);
+                }
+            }
+        }
+        return false;
     }
 
-    public static BingoCard[] getCards(File file) throws IOException {
-        BingoCard[] cards = new BingoCard[100];
-        try {
-            Scanner myReader = new Scanner(file);
-            int totalI = 0;
-            myReader.nextLine();
-            String line;
-            int[][] cardArray = new int[5][5];
-            while (myReader.hasNextLine()) {
-                myReader.nextLine();
-                for (int z = 0; z < 5; z++) {
-                    line = myReader.nextLine();
-                    int[] row = new int[5];
-                    List<String> numbers = Arrays.stream(line.split(" ")).filter(s -> !Objects.equals(s, "")).collect(Collectors.toList());
-                    for (int i = 0; i < numbers.size(); i++) {
-                        row[i] = Integer.parseInt(numbers.get(i));
-                    }
-                    cardArray[z] = row;
-                }
-                cards[totalI] = new BingoCard(cardArray);
-                totalI++;
-                cardArray = new int[5][5];
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-//        System.out.println(Arrays.deepToString(cardArray));
+    private static boolean bingo(int[][] card, int y, int x) {
+        return Arrays.stream(card[y]).allMatch(n -> n == -1) || Stream.of(card[0][x], card[1][x], card[2][x], card[3][x], card[4][x]).allMatch(n -> n == -1);
+    }
 
-        return cards;
+    public static int getRemaining(int[][] card) {
+        return Arrays.stream(card).flatMapToInt(Arrays::stream).filter(i -> i > -1).sum();
     }
 }

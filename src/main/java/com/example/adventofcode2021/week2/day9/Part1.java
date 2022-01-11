@@ -38,14 +38,14 @@ private static final int heigth = 100;
                 int finalI = i;
                 int finalJ = j;
                 if (Stream.of(
-                        i-1 < 0 || j-1 < 0 ? null : field[i-1][j-1],
-                        i-1 < 0 ? null : field[i-1][j],
-                        i-1 < 0 || j+2 > field[i].length ? null : field[i-1][j+1],
-                        j-1 < 0 ? null : field[i][j-1],
-                        j+2 > field[i].length ? null : field[i][j+1],
-                        i+2 > field.length || j-1 < 0 ? null : field[i+1][j-1],
-                        i+2 > field.length ? null : field[i+1][j],
-                        i+2 > field.length || j+2 > field[i].length ? null : field[i+1][j+1]
+                        inBounds(i - 1, j - 1) ? field[i-1][j-1] : null,
+                        inBounds(i - 1, j) ? field[i-1][j] : null,
+                        inBounds(i - 1, j + 1) ? field[i-1][j+1] : null,
+                        inBounds(i, j - 1) ? field[i][j-1] : null,
+                        inBounds(i, j + 1) ? field[i][j+1] : null,
+                        inBounds(i + 1, j - 1) ? field[i+1][j-1] : null,
+                        inBounds(i + 1, j) ? field[i+1][j] : null,
+                        inBounds(i + 1, j + 1) ? field[i+1][j+1] : null
                 ).filter(Objects::nonNull).allMatch(neighbour -> neighbour > field[finalI][finalJ])) result+= field[i][j]+1;
             }
             System.out.println();
@@ -53,6 +53,13 @@ private static final int heigth = 100;
 
 
         return result;
+    }
+
+    public static boolean inBounds(int y, int x) {
+        return y >= 0 &&
+                x >= 0 &&
+                y < heigth &&
+                x < width;
     }
 
 }

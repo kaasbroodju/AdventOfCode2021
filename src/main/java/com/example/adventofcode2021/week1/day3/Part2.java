@@ -2,36 +2,70 @@ package com.example.adventofcode2021.week1.day3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Part2 {
-    private static int x = 1000;
-    private static int y = 12;
+    private static final int x = 1000;
+    private static final int y = 12;
 
 
     public static void main(String[] args) {
-        StringBuilder mostCommon = new StringBuilder();
-        StringBuilder leastCommon = new StringBuilder();
-        boolean[][] input = readFile(new File("src/main/java/com/example/adventofcode2021/week1/day3/input.txt"));
-        System.out.println(Arrays.deepToString(input));
+        System.out.println(old(new File("src/main/java/com/example/adventofcode2021/week1/day3/input.txt")));
+        System.out.println(refactor(new File("src/main/java/com/example/adventofcode2021/week1/day3/input.txt")));
+    }
+
+    public static int old(File file) {
+        boolean[][] input = readFile(file);
         List<boolean[]> cache = new ArrayList<>();
 
         for (int i = 0; i < x; i++) {
             cache.add(input[i]);
         }
 
-        System.out.println(recursion(cache, 0, new StringBuilder()));
-        System.out.println(temp(cache, 0, new StringBuilder()));
+        return getDecimal(recursion(cache, 0, new StringBuilder())) * getDecimal(temp(cache, 0, new StringBuilder()));
+    }
+
+    public static int refactor(File file) {
+        boolean[][] input = readFile(file);
+        List<boolean[]> cache = new ArrayList<>();
+
+        for (int i = 0; i < x; i++) {
+            cache.add(input[i]);
+        }
 
 
-        System.out.println(getDecimal(recursion(cache, 0, new StringBuilder())) * getDecimal(temp(cache, 0, new StringBuilder())));
+        return getDecimal(getMostOccurred(cache, 0)) * getDecimal(getLeastOccurred(cache, 0));
+    }
+
+    public static boolean[] getMostOccurred(List<boolean[]> list, int z) {
+        if (list.size() == 1) return list.get(0);
+        long counter = list.stream().filter(b -> b[z]).count();
+
+        boolean mostOccurred = counter >= Math.ceil((double) list.size() / (double) 2);
+
+        return getMostOccurred(
+                list.stream().filter(e -> e[z] == mostOccurred).collect(Collectors.toList()),
+                z+1);
+    }
+
+    public static boolean[] getLeastOccurred(List<boolean[]> list, int z) {
+        boolean mostOccurred;
+        int counter = 0;
+        for (int i = 0; i < list.size(); i++) {
+            counter += list.get(i)[z] ? 1 : 0;
+        }
+        mostOccurred = counter < Math.ceil((double) list.size() / (double) 2);
+        // remove all entries who dont have most occored on position
+        boolean finalMostOccurred = mostOccurred;
+        list = list.stream().filter(e -> e[z] == finalMostOccurred).collect(Collectors.toList());
+
+        if (list.size() <= 1) {
+            return list.get(0);
+        }
+        return getLeastOccurred(list, z+1);
     }
 
     public static String recursion(List<boolean[]> list, int z, StringBuilder sb) {
@@ -97,7 +131,27 @@ public class Part2 {
                 total += Math.pow(2, j);
             }
         }
-        System.out.println(total);
+        return total;
+    }
+
+    public static int getDecimal(boolean[] booleans) { // input should be boolean array
+        // remove this
+        int total = 0;
+        for (int i = booleans.length - 1; i >= 0; i--) {
+            if (booleans[i]) {
+                total += Math.pow(2, booleans.length - 1 - i);
+            }
+        }
+        return total;
+    }
+
+    public static int getDecimalRev(boolean[] booleans) {
+        int total = 0;
+        for (int i = 0; i < booleans.length; i++) {
+            if (booleans[i]) {
+                total += Math.pow(2, i);
+            }
+        }
         return total;
     }
 

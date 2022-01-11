@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class Part1 {
 
@@ -20,14 +17,11 @@ public class Part1 {
     }
 
     public static long old(File file, int days) throws IOException {
-        String input = Files.readString(file.toPath());
-
         long[] groups = new long[MAX_LIFE_CYCLE+1];
-
-        for (int i = 0; i < MAX_LIFE_CYCLE; i++) {
-            int finalI = i;
-            groups[i] = input.codePoints().filter(ch -> ch == 48 + finalI).count();
-        }
+        Files.readString(file.toPath()).codePoints().forEach(ch ->  {
+            int delta = ch - '0';
+            if (delta >= 0) groups[delta]++;
+        });
 
         long swapValue;
         long tempValue;
@@ -38,7 +32,6 @@ public class Part1 {
                 tempValue = groups[j-1];
                 groups[j-1] = swapValue;
             }
-
             groups[MAX_INCUBATION_TIME] += tempValue;
             groups[MAX_LIFE_CYCLE] = tempValue;
         }

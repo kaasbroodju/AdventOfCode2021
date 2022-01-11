@@ -1,8 +1,8 @@
 package com.example.adventofcode2021.week1.day2;
 
 public class Command {
-    private String command;
-    private int amount;
+    private final String command;
+    private final int amount;
 
     public Command(String command, int amount) {
         this.command = command;

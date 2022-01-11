@@ -4,11 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class Part2 {
 
@@ -22,14 +17,12 @@ public class Part2 {
     }
 
     public static long answer(File file, int days) throws IOException {
-        String input = Files.readString(file.toPath());
-
         long[] groups = new long[MAX_LIFE_CYCLE+1];
 
-        for (int i = 0; i < MAX_LIFE_CYCLE; i++) {
-            int finalI = i;
-            groups[i] = input.codePoints().filter(ch -> ch == '0' + finalI).count();
-        }
+        Files.readString(file.toPath()).codePoints().forEach(ch ->  {
+            int delta = ch - '0';
+            if (delta >= 0) groups[delta]++;
+        });
 
         long swapValue;
         long tempValue;

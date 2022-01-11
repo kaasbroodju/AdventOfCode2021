@@ -10,24 +10,27 @@ public class BenchMarkTest {
 
     @State(Scope.Thread)
     public static class Input {
-        public File file;
+        public int[] ints;
 
         @Setup
         public void setUp() {
-            file = new File("src/main/java/com/example/adventofcode2021/week1/day1/input.txt");
+			try {
+				ints = new DayOne().readInput(new File("src/main/java/com/example/adventofcode2021/week1/day1/input.txt"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
 
         @TearDown
         public void nothing() {}
     }
 
+	@Benchmark
+	public int partOne(Input input) throws IOException {
+		return new DayOne().partOne(input.ints);
+	}
     @Benchmark
-    public int old(Input input) {
-        return Part2.old(input.file);
-    }
-
-    @Benchmark
-    public int refactor(Input input) throws IOException {
-        return Part2.refactor(input.file);
+    public int partTwo(Input input) throws IOException {
+        return new DayOne().partTwo(input.ints);
     }
 }

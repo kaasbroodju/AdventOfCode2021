@@ -1,16 +1,8 @@
 package com.example.adventofcode2021.week1.day5;
 
-import com.example.adventofcode2021.week1.day4.BingoCard;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Part1 {
 
@@ -33,6 +25,7 @@ public class Part1 {
 
             int length;
 
+            // todo convert to 2 for loop cuz one of the i is always 1
             if (x1 == x2) {
                 length = y2 - y1;
                 grid[x1][y1]++;
