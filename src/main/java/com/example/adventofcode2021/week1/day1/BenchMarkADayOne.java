@@ -4,13 +4,14 @@ import org.openjdk.jmh.annotations.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Fork(value = 1, warmups = 1)
-public class BenchMarkTest {
+public class BenchMarkADayOne {
 
     @State(Scope.Thread)
     public static class Input {
-        public int[] ints;
+        public short[] ints;
 
         @Setup
         public void setUp() {
@@ -25,11 +26,11 @@ public class BenchMarkTest {
         public void nothing() {}
     }
 
-	@Benchmark
+	@Benchmark @BenchmarkMode(Mode.AverageTime) @OutputTimeUnit(TimeUnit.MICROSECONDS)
 	public int partOne(Input input) throws IOException {
 		return new DayOne().partOne(input.ints);
 	}
-    @Benchmark
+    @Benchmark @BenchmarkMode(Mode.AverageTime) @OutputTimeUnit(TimeUnit.MICROSECONDS)
     public int partTwo(Input input) throws IOException {
         return new DayOne().partTwo(input.ints);
     }

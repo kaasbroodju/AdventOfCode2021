@@ -1,77 +1,71 @@
 package com.example.adventofcode2021.week1.day1;
 
 import com.example.adventofcode2021.Day;
-import jdk.incubator.vector.IntVector;
-import jdk.incubator.vector.Vector;
-import jdk.incubator.vector.VectorOperators;
-import jdk.incubator.vector.VectorSpecies;
+import jdk.incubator.vector.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
-public class DayOne extends Day<int[], Integer> {
+public class DayOne extends Day<short[], Integer> {
 
-	private static final VectorSpecies<Integer> SPECIES = IntVector.SPECIES_PREFERRED;
+	// todo to shortVector
+	private static final VectorSpecies<Short> SPECIES = ShortVector.SPECIES_PREFERRED;
 	private static final int CHUNK_SIZE = SPECIES.length();
 
 	public static void main(String[] args) throws IOException {
-		new DayOne().main(new File("src/main/java/com/example/adventofcode2021/week1/day1/input.txt"));
-//		this.main(new File("src/main/java/com/example/adventofcode2021/week1/day1/input.txt"));
+		DayOne result = new DayOne();
+		short[] input = result.readInput(new File("src/main/java/com/example/adventofcode2021/week1/day1/input.txt"));
+		System.out.println(result.partOne(input));
+		System.out.println(result.partTwo(input));
 	}
 
 	@Override
-	public int[] readInput(File file) throws IOException {
-		return Files.newBufferedReader(file.toPath()).lines().mapToInt(Integer::parseInt).toArray();
+	public short[] readInput(File file) throws IOException {
+		short[] output = new short[2000];
+		Scanner scanner = new Scanner(file.toPath());
+		for (int i = 0; i < output.length; i++) {
+			output[i] = scanner.nextShort();
+		}
+		return output;
 
 	}
 
 	@Override
-	public Integer partOne(int[] input) {
-		return internalsRef(input, 3);
+	public Integer partOne(short[] input) {
+		return internals(input, 1);
 	}
 
 	@Override
-	public Integer partTwo(int[] input) {
+	public Integer partTwo(short[] input) {
 		return internals(input, 3);
 	}
 
-	private int internals(int[] input, int offset) {
-		boolean[] results = new boolean[input.length];
-		int loopBound = SPECIES.loopBound(input.length-offset);
-		int  i = 0;
-		for (; i < loopBound; i+=CHUNK_SIZE) {
-			IntVector.fromArray(SPECIES, input,  i).compare(VectorOperators.LT, IntVector.fromArray(SPECIES, input, i + offset)).intoArray(results, i);
-		}
-
-		for (; i < input.length-offset; i++) {
-			if (input[i] < input[i+offset]) results[i] = true;
-		}
-
-		int counter = 0;
-		for (boolean result : results) {
-			if (result) counter++;
-		}
-
-		return counter;
-	}
-
-	private int internalsRef(int[] input, int offset) {
-		Vector<Integer> results = SPECIES.zero();
-		Vector<Integer> ones = SPECIES.broadcast(1);
-
+	private int internals(short[] input, int offset) {
+		int results = 0;
 
 		int loopBound = SPECIES.loopBound(input.length-offset);
 		int  i = 0;
 		for (; i < loopBound; i+=CHUNK_SIZE) {
-			results = results.add(ones, IntVector.fromArray(SPECIES, input,  i).compare(VectorOperators.LT, IntVector.fromArray(SPECIES, input, i + offset)));
+			/*
+			[100, 101, 105, 106, 103, 104, 106, 108]
+			[106, 103, 104, 106, 108, 112, 123, 125]
+			<
+			Mask[TT..TTTT]
+			results += 6
+			 */
+			results += ShortVector.fromArray(SPECIES, input,  i).compare(VectorOperators.LT, ShortVector.fromArray(SPECIES, input, i + offset)).trueCount();
 		}
 
-		int counter = 0;
 		for (; i < input.length-offset; i++) {
-			if (input[i] < input[i+offset]) counter++;
+			if (input[i] < input[i+offset]) results++;
 		}
 
-		return (int) (results.reduceLanesToLong(VectorOperators.ADD) + counter);
+
+		return results;
 	}
 }
